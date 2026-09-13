@@ -1,36 +1,36 @@
-const blogs = [
-  {
-    id: 1,
-    title: "Learning Next.js",
-    author: "Mohammad",
-    url: "https://example.com/nextjs",
-    likes: 12,
-  },
-  {
-    id: 2,
-    title: "React Server Components",
-    author: "Matti",
-    url: "https://example.com/react-server-components",
-    likes: 8,
-  },
-  {
-    id: 3,
-    title: "Full Stack Development",
-    author: "University of Helsinki",
-    url: "https://fullstackopen.com",
-    likes: 20,
-  },
-];
+import Link from "next/link";
+import { getBlogs } from "@/app/services/blogs";
 
-export default function Blogs() {
+type BlogsPageProps = {
+  searchParams: Promise<{ filter?: string | string[] }>;
+};
+
+export default async function Blogs({ searchParams }: BlogsPageProps) {
+  const filterParam = (await searchParams).filter;
+  const filter = Array.isArray(filterParam) ? filterParam[0] : filterParam ?? "";
+  const normalizedFilter = filter.toLowerCase();
+  const blogs = [...getBlogs()]
+    .filter((blog) => blog.title.toLowerCase().includes(normalizedFilter))
+    .sort((first, second) => second.likes - first.likes);
+
   return (
     <main>
       <h1>Blogs</h1>
 
+      <form action="/blogs">
+        <label>
+          Search by title
+          <input name="filter" defaultValue={filter} />
+        </label>
+        <button type="submit">Search</button>
+      </form>
+
       <ul>
         {blogs.map((blog) => (
           <li key={blog.id}>
-            <strong>{blog.title}</strong> by {blog.author} — {blog.likes} likes
+            <Link href={`/blogs/${blog.id}`}>{blog.title}</Link> by {blog.author}
+            {" — "}
+            {blog.likes} likes
           </li>
         ))}
       </ul>
