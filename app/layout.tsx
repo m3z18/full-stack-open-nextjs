@@ -31,6 +31,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           <Link href="/blogs">Blogs</Link>
           {" | "}
           <Link href="/blogs/new">New Blog</Link>
+          {" | "}
+          <Link href="/users">Users</Link>
         </nav>
 
         {children}

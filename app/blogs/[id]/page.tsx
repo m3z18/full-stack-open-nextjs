@@ -8,7 +8,7 @@ type BlogPageProps = {
 
 export default async function BlogPage({ params }: BlogPageProps) {
   const id = Number((await params).id);
-  const blog = Number.isInteger(id) ? getBlog(id) : undefined;
+  const blog = Number.isInteger(id) ? await getBlog(id) : undefined;
 
   if (!blog) {
     notFound();

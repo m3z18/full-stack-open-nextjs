@@ -8,10 +8,7 @@ type BlogsPageProps = {
 export default async function Blogs({ searchParams }: BlogsPageProps) {
   const filterParam = (await searchParams).filter;
   const filter = Array.isArray(filterParam) ? filterParam[0] : filterParam ?? "";
-  const normalizedFilter = filter.toLowerCase();
-  const blogs = [...getBlogs()]
-    .filter((blog) => blog.title.toLowerCase().includes(normalizedFilter))
-    .sort((first, second) => second.likes - first.likes);
+  const blogs = await getBlogs(filter);
 
   return (
     <main>

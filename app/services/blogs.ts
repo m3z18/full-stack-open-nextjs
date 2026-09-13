@@ -1,65 +1,39 @@
-export type Blog = {
-  id: number;
-  title: string;
-  author: string;
-  url: string;
-  likes: number;
+import { desc, eq, ilike, sql } from "drizzle-orm";
+import { db } from "@/db";
+import { blogs } from "@/db/schema";
+
+export type Blog = typeof blogs.$inferSelect;
+
+type NewBlog = Pick<Blog, "title" | "author" | "url"> & {
+  userId?: number | null;
 };
 
-const blogs: Blog[] = [
-  {
-    id: 1,
-    title: "Learning Next.js",
-    author: "Mohammad",
-    url: "https://example.com/nextjs",
-    likes: 12,
-  },
-  {
-    id: 2,
-    title: "React Server Components",
-    author: "Matti",
-    url: "https://example.com/react-server-components",
-    likes: 8,
-  },
-  {
-    id: 3,
-    title: "Full Stack Development",
-    author: "University of Helsinki",
-    url: "https://fullstackopen.com",
-    likes: 20,
-  },
-];
-
-export function getBlogs(): readonly Blog[] {
-  return blogs;
+export async function getBlogs(filter = ""): Promise<Blog[]> {
+  return db
+    .select()
+    .from(blogs)
+    .where(filter ? ilike(blogs.title, `%${filter}%`) : undefined)
+    .orderBy(desc(blogs.likes));
 }
 
-export function getBlog(id: number): Blog | undefined {
-  return blogs.find((blog) => blog.id === id);
+export async function getBlog(id: number): Promise<Blog | undefined> {
+  return db.query.blogs.findFirst({
+    where: eq(blogs.id, id),
+  });
 }
 
-export function addBlog(blog: Omit<Blog, "id" | "likes">): Blog {
-  const newBlog: Blog = {
-    id: Math.max(0, ...blogs.map((blog) => blog.id)) + 1,
-    title: blog.title,
-    author: blog.author,
-    url: blog.url,
-    likes: 0,
-  };
-
-  blogs.push(newBlog);
+export async function addBlog(blog: NewBlog): Promise<Blog> {
+  const [newBlog] = await db.insert(blogs).values(blog).returning();
 
   return newBlog;
 }
 
-export function likeBlog(id: number): Blog | undefined {
-  const blog = getBlog(id);
-
-  if (!blog) {
-    return undefined;
-  }
-
-  blog.likes += 1;
+export async function likeBlog(id: number): Promise<Blog | undefined> {
+  const [blog] = await db
+    .update(blogs)
+    .set({ likes: sql`${blogs.likes} + 1` })
+    .where(eq(blogs.id, id))
+    .returning();
 
   return blog;
 }

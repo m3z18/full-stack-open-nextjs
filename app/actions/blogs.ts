@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { addBlog, likeBlog as likeBlogInMemory } from "@/app/services/blogs";
+import { addBlog, likeBlog as updateBlogLikes } from "@/app/services/blogs";
 
 export async function createBlog(formData: FormData) {
   const title = formData.get("title");
@@ -20,7 +20,7 @@ export async function createBlog(formData: FormData) {
     throw new Error("Title, author and URL are required");
   }
 
-  addBlog({
+  await addBlog({
     title: title.trim(),
     author: author.trim(),
     url: url.trim(),
@@ -33,7 +33,7 @@ export async function createBlog(formData: FormData) {
 export async function likeBlog(formData: FormData) {
   const id = Number(formData.get("id"));
 
-  if (!Number.isInteger(id) || !likeBlogInMemory(id)) {
+  if (!Number.isInteger(id) || !(await updateBlogLikes(id))) {
     return;
   }
 
