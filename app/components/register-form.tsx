@@ -8,9 +8,15 @@ import { useNotification } from "./notification-context";
 const inputClass =
   "w-full rounded border border-slate-300 px-3 py-2 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100";
 
-function Errors({ errors }: { errors?: string[] }) {
+function Errors({
+  errors,
+  testId,
+}: {
+  errors?: string[];
+  testId?: string;
+}) {
   return errors?.map((error) => (
-    <p className="mt-1 text-sm text-red-700" key={error}>
+    <p className="mt-1 text-sm text-red-700" data-testid={testId} key={error}>
       {error}
     </p>
   ));
@@ -42,7 +48,7 @@ export function RegisterForm() {
           id="username"
           name="username"
         />
-        <Errors errors={state.errors?.username} />
+        <Errors errors={state.errors?.username} testId="username-error" />
       </div>
 
       <div>
@@ -78,7 +84,7 @@ export function RegisterForm() {
           className="mb-1 block font-medium"
           htmlFor="passwordConfirmation"
         >
-          Confirm password
+          Confirm Password
         </label>
         <input
           autoComplete="new-password"
@@ -87,11 +93,15 @@ export function RegisterForm() {
           name="passwordConfirmation"
           type="password"
         />
-        <Errors errors={state.errors?.passwordConfirmation} />
+        <Errors
+          errors={state.errors?.passwordConfirmation}
+          testId="passwordConfirm-error"
+        />
       </div>
 
       <button
         className="rounded bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+        data-testid="register-button"
         disabled={pending}
         type="submit"
       >

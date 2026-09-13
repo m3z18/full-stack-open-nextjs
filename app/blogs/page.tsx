@@ -20,6 +20,7 @@ export default async function Blogs({ searchParams }: BlogsPageProps) {
         </label>
         <input
           className="min-w-0 flex-1 rounded border border-slate-300 bg-white px-3 py-2"
+          data-testid="filter-input"
           defaultValue={filter}
           id="filter"
           name="filter"
@@ -27,13 +28,14 @@ export default async function Blogs({ searchParams }: BlogsPageProps) {
         />
         <button
           className="rounded bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700"
+          data-testid="search-button"
           type="submit"
         >
           Search
         </button>
       </form>
 
-      <ul className="space-y-3">
+      <ul className="space-y-3" data-testid="blogs-list">
         {blogs.map((blog) => (
           <li className="rounded-lg bg-white p-4 shadow-sm" key={blog.id}>
             <Link

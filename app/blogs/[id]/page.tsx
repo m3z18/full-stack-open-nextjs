@@ -25,12 +25,17 @@ export default async function BlogPage({ params }: BlogPageProps) {
 
   return (
     <main className="mx-auto max-w-3xl px-4 py-10">
-      <article className="rounded-lg bg-white p-6 shadow-sm">
-        <h1 className="text-3xl font-bold">{blog.title}</h1>
+      <article
+        className="rounded-lg bg-white p-6 shadow-sm"
+        data-testid="blog-detail"
+      >
+        <h1 className="text-3xl font-bold" data-testid="blog-title">
+          {blog.title}
+        </h1>
         <dl className="mt-6 space-y-3">
           <div>
             <dt className="font-semibold">Author</dt>
-            <dd>{blog.author}</dd>
+            <dd data-testid="blog-author">{blog.author}</dd>
           </div>
           <div>
             <dt className="font-semibold">URL</dt>
@@ -64,7 +69,8 @@ export default async function BlogPage({ params }: BlogPageProps) {
             <form action={addToReadingList}>
               <input name="blogId" type="hidden" value={blog.id} />
               <button
-                className="rounded border border-blue-600 px-4 py-2 font-medium text-blue-700 hover:bg-blue-50"
+              className="rounded border border-blue-600 px-4 py-2 font-medium text-blue-700 hover:bg-blue-50"
+              data-testid="add-to-reading-list-button"
                 type="submit"
               >
                 Add to reading list

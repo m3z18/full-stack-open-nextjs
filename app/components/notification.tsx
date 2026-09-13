@@ -17,6 +17,7 @@ export function Notification() {
   return (
     <div
       className={`mx-auto mt-4 w-full max-w-4xl rounded border-l-4 px-4 py-3 ${colors}`}
+      data-testid="notification"
       role="status"
     >
       {notification.message}

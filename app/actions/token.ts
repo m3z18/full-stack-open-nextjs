@@ -6,14 +6,24 @@ import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/app/services/auth";
 import { setUserToken } from "@/app/services/users";
 
-export async function generateApiToken() {
+export type ApiTokenState = {
+  token: string | null;
+  message?: string;
+};
+
+export async function generateApiToken(
+  _previousState: ApiTokenState,
+): Promise<ApiTokenState> {
+  void _previousState;
   const currentUser = await getCurrentUser();
 
   if (!currentUser) {
     redirect("/login?notification=Please%20log%20in&notificationType=error");
   }
 
-  await setUserToken(currentUser.id, randomUUID());
+  const token = randomUUID();
+  await setUserToken(currentUser.id, token);
   revalidatePath("/me");
-  redirect("/me?notification=API%20token%20generated");
+
+  return { token, message: "API token generated" };
 }

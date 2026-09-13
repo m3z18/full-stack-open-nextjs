@@ -10,21 +10,21 @@ export function Navbar({ session }: { session: Session | null }) {
       <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-3 px-4 py-3">
         <div className="flex flex-wrap items-center gap-1">
           <Link className={linkClass} href="/">
-            Home
+            home
           </Link>
           <Link className={linkClass} href="/blogs">
-            Blogs
+            blogs
           </Link>
           <Link className={linkClass} href="/users">
-            Users
+            users
           </Link>
           {session?.user && (
             <>
               <Link className={linkClass} href="/blogs/new">
-                New Blog
+                new blog
               </Link>
               <Link className={linkClass} href="/me">
-                My Page
+                me
               </Link>
             </>
           )}
@@ -46,10 +46,10 @@ export function Navbar({ session }: { session: Session | null }) {
           ) : (
             <>
               <Link className={linkClass} href="/login">
-                Login
+                login
               </Link>
               <Link className={linkClass} href="/register">
-                Register
+                register
               </Link>
             </>
           )}

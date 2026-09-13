@@ -1,12 +1,11 @@
 "use client";
 
 import { useEffect } from "react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { useNotification } from "./notification-context";
 
 export function NotificationFromSearchParams() {
   const pathname = usePathname();
-  const router = useRouter();
   const searchParams = useSearchParams();
   const { notify } = useNotification();
 
@@ -25,8 +24,12 @@ export function NotificationFromSearchParams() {
     nextParams.delete("notification");
     nextParams.delete("notificationType");
     const query = nextParams.toString();
-    router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false });
-  }, [notify, pathname, router, searchParams]);
+    window.history.replaceState(
+      null,
+      "",
+      query ? `${pathname}?${query}` : pathname,
+    );
+  }, [notify, pathname, searchParams]);
 
   return null;
 }

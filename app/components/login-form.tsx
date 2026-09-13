@@ -50,13 +50,14 @@ export function LoginForm() {
       </div>
 
       {state.message && (
-        <p className="text-sm text-red-700" role="alert">
+        <p className="text-sm text-red-700" data-testid="error-message" role="alert">
           {state.message}
         </p>
       )}
 
       <button
         className="rounded bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+        data-testid="login-button"
         disabled={pending}
         type="submit"
       >

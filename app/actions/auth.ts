@@ -36,7 +36,7 @@ export async function login(
     await signIn("credentials", {
       username,
       password,
-      redirectTo: "/blogs?notification=Logged%20in",
+      redirectTo: "/?notification=Logged%20in",
     });
   } catch (error) {
     if (error instanceof AuthError) {

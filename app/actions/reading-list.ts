@@ -3,7 +3,6 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/app/services/auth";
-import { getBlog } from "@/app/services/blogs";
 import {
   addReadingListEntry,
   markReadingListEntryRead,
@@ -17,16 +16,15 @@ export async function addToReadingList(formData: FormData) {
   }
 
   const blogId = Number(formData.get("blogId"));
-  const blog = Number.isInteger(blogId) ? await getBlog(blogId) : undefined;
 
-  if (!blog || blog.userId === currentUser.id) {
+  if (!Number.isInteger(blogId)) {
     return;
   }
 
-  await addReadingListEntry(currentUser.id, blog.id);
+  await addReadingListEntry(currentUser.id, blogId);
   revalidatePath("/me");
-  revalidatePath(`/blogs/${blog.id}`);
-  redirect(`/blogs/${blog.id}?notification=Added%20to%20reading%20list`);
+  revalidatePath(`/blogs/${blogId}`);
+  redirect(`/blogs/${blogId}?notification=Added%20to%20reading%20list`);
 }
 
 export async function markAsRead(formData: FormData) {
