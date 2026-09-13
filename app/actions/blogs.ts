@@ -3,31 +3,46 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { addBlog, likeBlog as updateBlogLikes } from "@/app/services/blogs";
+import { getCurrentUser } from "@/app/services/auth";
+import { blogFormSchema, type BlogFormState } from "@/app/lib/definitions";
 
-export async function createBlog(formData: FormData) {
-  const title = formData.get("title");
-  const author = formData.get("author");
-  const url = formData.get("url");
+export async function createBlog(
+  _previousState: BlogFormState,
+  formData: FormData,
+): Promise<BlogFormState> {
+  const values = {
+    title: typeof formData.get("title") === "string" ? String(formData.get("title")) : "",
+    author:
+      typeof formData.get("author") === "string"
+        ? String(formData.get("author"))
+        : "",
+    url: typeof formData.get("url") === "string" ? String(formData.get("url")) : "",
+  };
+  const validatedFields = blogFormSchema.safeParse(values);
 
-  if (
-    typeof title !== "string" ||
-    typeof author !== "string" ||
-    typeof url !== "string" ||
-    !title.trim() ||
-    !author.trim() ||
-    !url.trim()
-  ) {
-    throw new Error("Title, author and URL are required");
+  if (!validatedFields.success) {
+    return {
+      errors: validatedFields.error.flatten().fieldErrors,
+      message: "Please correct the highlighted fields",
+      values,
+    };
   }
 
-  await addBlog({
-    title: title.trim(),
-    author: author.trim(),
-    url: url.trim(),
-  });
+  const currentUser = await getCurrentUser();
+
+  if (!currentUser) {
+    return {
+      message: "You must be logged in to create a blog",
+      values,
+    };
+  }
+
+  await addBlog(validatedFields.data, currentUser.id);
 
   revalidatePath("/blogs");
-  redirect("/blogs");
+  revalidatePath(`/users/${currentUser.username}`);
+  revalidatePath("/me");
+  redirect("/blogs?notification=Blog%20created");
 }
 
 export async function likeBlog(formData: FormData) {

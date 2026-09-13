@@ -1,12 +1,10 @@
 import { desc, eq, ilike, sql } from "drizzle-orm";
 import { db } from "@/db";
-import { blogs } from "@/db/schema";
+import { blogs, readingList } from "@/db/schema";
 
 export type Blog = typeof blogs.$inferSelect;
 
-type NewBlog = Pick<Blog, "title" | "author" | "url"> & {
-  userId?: number | null;
-};
+type NewBlog = Pick<Blog, "title" | "author" | "url">;
 
 export async function getBlogs(filter = ""): Promise<Blog[]> {
   return db
@@ -22,8 +20,13 @@ export async function getBlog(id: number): Promise<Blog | undefined> {
   });
 }
 
-export async function addBlog(blog: NewBlog): Promise<Blog> {
-  const [newBlog] = await db.insert(blogs).values(blog).returning();
+export async function addBlog(blog: NewBlog, userId: number): Promise<Blog> {
+  const [newBlog] = await db
+    .insert(blogs)
+    .values({ ...blog, userId })
+    .returning();
+
+  await db.insert(readingList).values({ userId, blogId: newBlog.id });
 
   return newBlog;
 }

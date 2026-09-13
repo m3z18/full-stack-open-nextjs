@@ -1,6 +1,11 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import Link from "next/link";
+import { Suspense } from "react";
+import { auth } from "@/auth";
+import { Navbar } from "@/app/components/navbar";
+import { Notification } from "@/app/components/notification";
+import { NotificationFromSearchParams } from "@/app/components/notification-from-search-params";
+import { Providers } from "@/app/components/providers";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -18,24 +23,23 @@ export const metadata: Metadata = {
   description: "Full Stack Open Next.js Blog App",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  const session = await auth();
+
   return (
     <html
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
-        <nav>
-          <Link href="/">Home</Link>
-          {" | "}
-          <Link href="/blogs">Blogs</Link>
-          {" | "}
-          <Link href="/blogs/new">New Blog</Link>
-          {" | "}
-          <Link href="/users">Users</Link>
-        </nav>
-
-        {children}
+      <body className="flex min-h-full flex-col bg-slate-50 text-slate-900">
+        <Providers session={session}>
+          <Navbar session={session} />
+          <Suspense fallback={null}>
+            <NotificationFromSearchParams />
+          </Suspense>
+          <Notification />
+          <div className="flex-1">{children}</div>
+        </Providers>
       </body>
     </html>
   );

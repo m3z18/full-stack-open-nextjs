@@ -15,6 +15,27 @@
       "when": 1789294857705,
       "tag": "0001_short_phantom_reporter",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1789296470597,
+      "tag": "0002_perfect_terrax",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1789296496056,
+      "tag": "0003_eminent_lady_ursula",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1789296528503,
+      "tag": "0004_big_reaper",
+      "breakpoints": true
     }
   ]
 }
